@@ -1,4 +1,5 @@
 import { resolve } from 'node:path'
+import cors from 'cors'
 import express from 'express'
 
 import routes from './routes.js'
@@ -13,6 +14,8 @@ class App {
   }
 
   middlewares() {
+    // libera o front-end (outro endereço) para acessar a API
+    this.app.use(cors())
     this.app.use(express.json())
     // deixa as imagens acessíveis pelo navegador
     const uploads = resolve(import.meta.dirname, '..', 'uploads')

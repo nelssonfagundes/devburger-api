@@ -12,8 +12,10 @@ Desenvolvida com ajuda de inteligência artificial (Claude), seguindo a sequênc
 - **JWT (jsonwebtoken)**: login com token
 - **Arquitetura MVC + middlewares**: autenticação e permissão de administrador
 - **Yup**: validação dos dados
-- **bcrypt**: senha guardada como hash
+- **bcryptjs**: senha guardada como hash
 - **Multer**: upload de imagens de produtos e categorias
+- **Stripe**: pagamento com cartão (modo de teste)
+- **CORS**: libera o front-end para acessar a API
 - **Biome**: formatação e padronização do código
 
 ## Estrutura
@@ -43,8 +45,17 @@ Precisa ter instalado: Node.js 22 LTS, Docker Desktop e VS Code (ou outro editor
 npm install              # instala as dependências
 docker compose up -d     # sobe PostgreSQL e MongoDB
 npm run migrate          # cria as tabelas
+npm run seed             # (opcional) cria admin, categorias e produtos de exemplo
 npm run dev              # liga o servidor em http://localhost:3001
 ```
+
+## Pagamento (Stripe)
+
+1. Crie uma conta grátis em https://dashboard.stripe.com e fique no **modo de teste**.
+2. Copie o arquivo `.env.example` para `.env` e coloque a **Secret key** de teste (`sk_test_...`).
+3. Reinicie a API.
+
+Cartão de teste: `4242 4242 4242 4242`, qualquer data futura e qualquer CVC.
 
 ## Rotas
 
@@ -64,6 +75,7 @@ Rotas marcadas com 👑 só funcionam para usuário administrador.
 | GET 🔒 | `/orders` | Admin vê todos os pedidos; cliente vê só os dele |
 | POST 🔒 | `/orders` | Cria pedido: `{ "products": [{ "id": 1, "quantity": 2 }] }` |
 | PUT 🔒👑 | `/orders/:id` | Muda o status do pedido |
+| POST 🔒 | `/create-payment-intent` | Cria o pagamento no Stripe (valor do banco + R$ 5,00 de entrega) |
 
 Status de pedido aceitos: `Pedido realizado`, `Em preparação`, `Saiu para entrega`, `Entregue`, `Cancelado`.
 
@@ -86,5 +98,7 @@ Status de pedido aceitos: `Pedido realizado`, `Em preparação`, `Saiu para entr
 - Só administrador cria e edita produtos e categorias e muda o status dos pedidos.
 - O pedido usa o preço e a categoria que estão no banco, não os enviados pelo cliente.
 - Preço em centavos (número inteiro).
+
+> O `npm run seed` cria o usuário `admin@devburger.com` com a senha `123456`. Troque essa senha se for publicar.
 
 > Antes de publicar, troque o `secret` em `src/config/auth.js` por um texto longo e só seu.

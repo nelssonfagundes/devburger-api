@@ -5,13 +5,15 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
-    "migrate": "npx sequelize db:migrate",
-    "lint": "npx biome check --write ."
+    "dev": "node --watch --env-file-if-exists=.env src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "migrate": "sequelize db:migrate --config src/config/database.cjs --migrations-path src/database/migrations",
+    "lint": "npx biome check --write .",
+    "seed": "node src/database/seed.js"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.0",
@@ -19,6 +21,7 @@
     "pg": "^8.13.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.5",
+    "stripe": "^17.4.0",
     "uuid": "^11.0.3",
     "yup": "^1.6.1"
   },
